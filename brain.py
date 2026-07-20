@@ -92,7 +92,8 @@ with tab3:
     st.subheader("Auto Pull from GitHub")
     if st.button("Pull Latest Opportunities"):
         try:
-            r = requests.get("https://raw.githubusercontent.com/kritikl/brain/main/opportunities.json")
+            url = "https://raw.githubusercontent.com/YOUR_USERNAME/brain/main/opportunities.json"
+            r = requests.get(url, timeout=10)
             if r.status_code == 200:
                 new_opps = r.json()
                 st.success(f"Found {len(new_opps)} new opportunities!")
@@ -105,11 +106,11 @@ with tab3:
                         'Notes': opp.get('match', 'New')
                     }])
                     st.session_state.todo = pd.concat([st.session_state.todo, new_row], ignore_index=True)
-                st.success("New entries added!")
+                st.success("New entries added to your list!")
             else:
-                st.error("Could not fetch")
+                st.error(f"Failed to fetch. Status: {r.status_code}. Make sure the file exists in your repo.")
         except Exception as e:
-            st.error(f"Error: {e}")
+            st.error(f"Could not fetch. Error: {str(e)}\n\nCheck: Is the repo public? Is 'opportunities.json' in the root?")
 
 with tab4:
     st.subheader("Manual Add")

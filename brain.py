@@ -92,7 +92,7 @@ with tab3:
     st.subheader("Auto Pull from GitHub")
     if st.button("Pull Latest Opportunities"):
         try:
-            url = "https://raw.githubusercontent.com/YOUR_USERNAME/brain/main/opportunities.json"
+            url = "https://raw.githubusercontent.com/kritikl/brain/main/opportunities.json"
             r = requests.get(url, timeout=10)
             if r.status_code == 200:
                 new_opps = r.json()

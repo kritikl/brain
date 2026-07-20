@@ -92,7 +92,7 @@ with tab3:
     st.subheader("Auto Pull from GitHub")
     if st.button("Pull Latest Opportunities"):
         try:
-            r = requests.get("https://raw.githubusercontent.com/YOUR_USERNAME/brain/main/opportunities.json")
+            r = requests.get("https://raw.githubusercontent.com/kritikl/brain/main/opportunities.json")
             if r.status_code == 200:
                 new_opps = r.json()
                 st.success(f"Found {len(new_opps)} new opportunities!")

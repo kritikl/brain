@@ -6,15 +6,66 @@ from datetime import datetime
 st.set_page_config(page_title="AI Hardware Second Brain", layout="wide")
 st.title("AI Hardware Career Second Brain")
 
-# Load local data
-@st.cache_data
-def load_local_todo():
-    # Full data here (use the comprehensive list from previous messages)
-    data = { ... }  # Paste the full data dict
-    return pd.DataFrame(data)
+# Expanded full data
+data = {
+    'Status': ['To Do'] * 40,
+    'Deadline': ['2026-10-31','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','2026-11-15','2026-12-01',
+                 '2026-12-01','2026-12-01','2026-12-15','Self-Paced','2027-01-15','2027-03-31','Ongoing','Ongoing','Ongoing','Ongoing',
+                 '2026-12-15','2026-12-15','2026-12-15','Self-Paced','2027-01-15','Ongoing','Ongoing','Ongoing','2027-04-10','Ongoing',
+                 'Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing'],
+    'Category': ['Application','Networking','Networking','Networking','Networking','Networking','Networking','Networking','Application','Internship',
+                 'Internship','Internship','Application','Preparation','Application','Application','Networking','Networking','Networking','Networking',
+                 'Application','Application','Application','Preparation','Application','Networking','Networking','Networking','Application','Preparation',
+                 'Preparation','Preparation','Preparation','Preparation','Preparation','Preparation','Preparation','Preparation','Preparation','Preparation'],
+    'Task Description': [
+        'Apply to University of Tokyo IME Graduate Program',
+        'Contact Masato Motomura - AI hardware accelerators',
+        'Contact Tetsuya Asai - Neuromorphic',
+        'Contact Koji Inoue - Computer architecture',
+        'Contact Hidehiro Fujiwara - VLSI',
+        'Contact Luca Benini - Energy-efficient computing',
+        'Contact Giacomo Indiveri - Neuromorphic',
+        'Contact Said Hamdioui - In-memory computing',
+        'Apply to Institute of Science Tokyo IGP(A)',
+        'Apply to RIKEN AIP Winter Internship',
+        'Apply to AIST Internship',
+        'Apply to IMEC Student Internship',
+        'Apply to ETH Zurich',
+        'Review Eyeriss paper series',
+        'Apply to NUS PhD',
+        'Apply to OIST PhD',
+        'Contact Marian Verhelst (KU Leuven)',
+        'Contact David Atienza (EPFL)',
+        'Contact Ken Takeuchi (Tokyo)',
+        'Contact Takahiro Hanyu (Tohoku)',
+        'Apply to Stanford EE/CS PhD',
+        'Apply to UC Berkeley EECS PhD',
+        'Apply to MIT EECS PhD',
+        'Review Loihi Neuromorphic paper',
+        'Apply to KAIST EE PhD',
+        'Contact Rapidus lab',
+        'Contact Sony Semiconductor',
+        'Contact Renesas Electronics',
+        'Apply to Waseda IPS',
+        'Prepare MEXT Scholarship Application',
+        'Update CV with hardware projects',
+        'Prepare research proposal on efficient inference',
+        'Review ISSCC 2027 call',
+        'Track application status weekly',
+        'Schedule professor follow-ups',
+        'Contact University of Tsukuba faculty',
+        'Monitor MEXT 2027 updates',
+        'Review new papers on quantized networks',
+        'Prepare for USA applications',
+        'Weekly progress review'
+    ],
+    'Notes': ['Tier 1 Core','High priority','High priority','High priority','High priority','High priority','High priority','High priority','Tier 1 Core','High priority',
+              'High priority','High priority','Tier 1 Core','Core reading','Backup','Core','High priority','High priority','High priority','High priority',
+              'Reach','Reach','Reach','Core','Backup','High priority','High priority','High priority','Tier 1 Core','High','High','High','Important','High','High','High','High','High','High','High']
+}
 
 if 'todo' not in st.session_state:
-    st.session_state.todo = load_local_todo()
+    st.session_state.todo = pd.DataFrame(data)
 
 todo = st.session_state.todo
 
@@ -25,36 +76,71 @@ with tab1:
     completed = len(todo[todo['Status'] == 'Done'])
     total = len(todo)
     progress = int((completed / total) * 100) if total > 0 else 0
-    st.metric("Progress", f"{progress}%", f"{completed}/{total} tasks")
+    st.metric("Overall Progress", f"{progress}%", f"{completed}/{total} tasks")
     st.progress(progress)
 
 with tab2:
     st.subheader("Master To-Do List")
-    edited = st.data_editor(todo, use_container_width=True, num_rows="dynamic")
+    edited = st.data_editor(todo, width='stretch', num_rows="dynamic", key="todo_editor")
     if st.button("Save Changes"):
         st.session_state.todo = edited
         st.success("Saved")
 
 with tab3:
-    st.subheader("Auto Scan from GitHub")
-    if st.button("Pull Latest Opportunities"):
+    st.subheader("Auto Scan")
+
+    if st.button("Pull Latest Opportunities from GitHub"):
+        url = "https://raw.githubusercontent.com/kritikl/brain/main/opportunities.json"
+
+        st.write(f"Fetching: {url}")
+
         try:
-            r = requests.get("https://raw.githubusercontent.com/kritikl/brain/main/opportunities.json")
+            r = requests.get(url, timeout=10)
+
+            st.write(f"HTTP Status: {r.status_code}")
+            st.write("Response Preview:")
+            st.code(r.text[:500], language="text")
+
             if r.status_code == 200:
                 new_opps = r.json()
-                st.success(f"Found {len(new_opps)} new opportunities!")
+
+                st.success(f"Found {len(new_opps)} opportunities.")
+
+                added = 0
+
                 for opp in new_opps:
-                    st.write(f"• {opp.get('title')} (due {opp.get('deadline')})")
-                    if st.button(f"Add {opp.get('title')}", key=opp.get('title')):
-                        new_row = pd.DataFrame([{'Status': 'To Do', 'Deadline': opp.get('deadline'), 'Category': 'Application', 'Task Description': opp.get('title'), 'Notes': opp.get('match')}])
-                        st.session_state.todo = pd.concat([st.session_state.todo, new_row], ignore_index=True)
-                        st.success("Added!")
-        except:
-            st.error("Could not fetch updates. Make sure the repo exists.")
+                    title = opp.get("title", "New Opportunity")
+
+                    if title not in st.session_state.todo["Task Description"].values:
+                        new_row = pd.DataFrame([{
+                            "Status": "To Do",
+                            "Deadline": opp.get("deadline", "Ongoing"),
+                            "Category": "Application",
+                            "Task Description": title,
+                            "Notes": opp.get("match", "New")
+                        }])
+
+                        st.session_state.todo = pd.concat(
+                            [st.session_state.todo, new_row],
+                            ignore_index=True
+                        )
+
+                        added += 1
+
+                st.success(f"Added {added} new opportunities.")
+
+            else:
+                st.error(f"GitHub returned HTTP {r.status_code}")
+
+        except requests.exceptions.RequestException as e:
+            st.exception(e)
+
+        except Exception as e:
+            st.exception(e)
 
 with tab4:
     st.subheader("Manual Add")
-    with st.form("add"):
+    with st.form("new_task"):
         deadline = st.date_input("Deadline", datetime(2026, 11, 15))
         category = st.selectbox("Category", ["Application", "Networking", "Internship", "Preparation"])
         task = st.text_input("Task Description")
@@ -64,4 +150,4 @@ with tab4:
             st.session_state.todo = pd.concat([st.session_state.todo, new_row], ignore_index=True)
             st.success("Added!")
 
-st.caption("v1.5 - Connected to GitHub automation")
+st.caption("v1.7 Expanded - With full list and your Auto Scan tab")

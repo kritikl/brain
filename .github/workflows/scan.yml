@@ -2,43 +2,30 @@ name: Scan
 
 on:
   schedule:
-    - cron: "0 8 * * *"
+    - cron: '0 8 * * *'
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   scan:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          pip install requests beautifulsoup4 pandas
+        run: pip install requests beautifulsoup4 pandas
 
-      - name: Run scanner
-        run: |
-          python scan.py
-
-      - name: Show generated file
-        run: |
-          ls -la
-          cat opportunities.json
+      - name: Run Scan
+        run: python scan.py
 
       - name: Commit updates
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add opportunities.json
-
-          git commit -m "Automatic scan update" || echo "No changes"
-
+          git commit -m "Scan update" || echo "No changes"
           git push

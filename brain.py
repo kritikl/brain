@@ -6,12 +6,17 @@ from datetime import datetime
 st.set_page_config(page_title="AI Hardware Second Brain", layout="wide")
 st.title("AI Hardware Career Second Brain")
 
+# Expanded full data
 data = {
-    'Status': ['To Do'] * 20,
+    'Status': ['To Do'] * 40,
     'Deadline': ['2026-10-31','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','2026-11-15','2026-12-01',
-                 '2026-12-01','2026-12-01','2026-12-15','Self-Paced','2027-01-15','2027-03-31','Ongoing','Ongoing','Ongoing','Ongoing'],
+                 '2026-12-01','2026-12-01','2026-12-15','Self-Paced','2027-01-15','2027-03-31','Ongoing','Ongoing','Ongoing','Ongoing',
+                 '2026-12-15','2026-12-15','2026-12-15','Self-Paced','2027-01-15','Ongoing','Ongoing','Ongoing','2027-04-10','Ongoing',
+                 'Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing'],
     'Category': ['Application','Networking','Networking','Networking','Networking','Networking','Networking','Networking','Application','Internship',
-                 'Internship','Internship','Application','Preparation','Application','Application','Networking','Networking','Networking','Networking'],
+                 'Internship','Internship','Application','Preparation','Application','Application','Networking','Networking','Networking','Networking',
+                 'Application','Application','Application','Preparation','Application','Networking','Networking','Networking','Application','Preparation',
+                 'Preparation','Preparation','Preparation','Preparation','Preparation','Preparation','Preparation','Preparation','Preparation','Preparation'],
     'Task Description': [
         'Apply to University of Tokyo IME Graduate Program',
         'Contact Masato Motomura - AI hardware accelerators',
@@ -32,10 +37,31 @@ data = {
         'Contact Marian Verhelst (KU Leuven)',
         'Contact David Atienza (EPFL)',
         'Contact Ken Takeuchi (Tokyo)',
-        'Contact Takahiro Hanyu (Tohoku)'
+        'Contact Takahiro Hanyu (Tohoku)',
+        'Apply to Stanford EE/CS PhD',
+        'Apply to UC Berkeley EECS PhD',
+        'Apply to MIT EECS PhD',
+        'Review Loihi Neuromorphic paper',
+        'Apply to KAIST EE PhD',
+        'Contact Rapidus lab',
+        'Contact Sony Semiconductor',
+        'Contact Renesas Electronics',
+        'Apply to Waseda IPS',
+        'Prepare MEXT Scholarship Application',
+        'Update CV with hardware projects',
+        'Prepare research proposal on efficient inference',
+        'Review ISSCC 2027 call',
+        'Track application status weekly',
+        'Schedule professor follow-ups',
+        'Contact University of Tsukuba faculty',
+        'Monitor MEXT 2027 updates',
+        'Review new papers on quantized networks',
+        'Prepare for USA applications',
+        'Weekly progress review'
     ],
     'Notes': ['Tier 1 Core','High priority','High priority','High priority','High priority','High priority','High priority','High priority','Tier 1 Core','High priority',
-              'High priority','High priority','Tier 1 Core','Core reading','Backup','Core','High priority','High priority','High priority','High priority']
+              'High priority','High priority','Tier 1 Core','Core reading','Backup','Core','High priority','High priority','High priority','High priority',
+              'Reach','Reach','Reach','Core','Backup','High priority','High priority','High priority','Tier 1 Core','High','High','High','Important','High','High','High','High','High','High','High']
 }
 
 if 'todo' not in st.session_state:
@@ -124,4 +150,4 @@ with tab4:
             st.session_state.todo = pd.concat([st.session_state.todo, new_row], ignore_index=True)
             st.success("Added!")
 
-st.caption("v1.7 - With your Auto Scan tab")
+st.caption("v1.7 Expanded - With full list and your Auto Scan tab")

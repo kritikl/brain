@@ -92,8 +92,7 @@ with tab3:
     st.subheader("Auto Pull from GitHub")
     if st.button("Pull Latest Opportunities"):
         try:
-            url = "https://raw.githubusercontent.com/kritikl/brain/main/opportunities.json"
-            r = requests.get(url, timeout=10)
+            r = requests.get("https://raw.githubusercontent.com/kritikl/brain/main/opportunities.json", timeout=10)
             if r.status_code == 200:
                 new_opps = r.json()
                 st.success(f"Found {len(new_opps)} new opportunities!")
@@ -106,11 +105,11 @@ with tab3:
                         'Notes': opp.get('match', 'New')
                     }])
                     st.session_state.todo = pd.concat([st.session_state.todo, new_row], ignore_index=True)
-                st.success("New entries added to your list!")
+                st.success("New entries added!")
             else:
-                st.error(f"Failed to fetch. Status: {r.status_code}. Make sure the file exists in your repo.")
+                st.error(f"Failed. Status: {r.status_code}. Make sure repo is public and file exists.")
         except Exception as e:
-            st.error(f"Could not fetch. Error: {str(e)}\n\nCheck: Is the repo public? Is 'opportunities.json' in the root?")
+            st.error(f"Could not fetch. Error: {str(e)}")
 
 with tab4:
     st.subheader("Manual Add")
@@ -124,4 +123,4 @@ with tab4:
             st.session_state.todo = pd.concat([st.session_state.todo, new_row], ignore_index=True)
             st.success("Added!")
 
-st.caption("v1.6 - Fixed and Full")
+st.caption("v1.6 - Fixed")

@@ -6,7 +6,6 @@ from datetime import datetime
 st.set_page_config(page_title="AI Hardware Second Brain", layout="wide")
 st.title("AI Hardware Career Second Brain")
 
-# Minimal stable data
 data = {
     'Status': ['To Do'] * 15,
     'Deadline': ['2026-10-31','Ongoing','Ongoing','Ongoing','2026-11-15','2026-12-01','2026-12-15','Self-Paced','2027-01-15','2027-03-31','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing'],
@@ -31,10 +30,7 @@ data = {
     'Notes': ['Tier 1 Core','High priority','High priority','High priority','Tier 1 Core','High priority','Tier 1 Core','Core reading','Backup','Core','High priority','High priority','High priority','Reach','High']
 }
 
-if 'todo' not in st.session_state:
-    st.session_state.todo = pd.DataFrame(data)
-
-todo = st.session_state.todo
+todo = pd.DataFrame(data)
 
 tab1, tab2, tab3, tab4 = st.tabs(["Dashboard", "To-Do List", "Auto Pull", "Manual Add"])
 
@@ -48,13 +44,12 @@ with tab1:
 
 with tab2:
     st.subheader("Master To-Do List")
-    edited = st.data_editor(todo, use_container_width=True, num_rows="dynamic", key="todo_editor")
+    edited = st.data_editor(todo, width='stretch', num_rows="dynamic", key="todo_editor")
     if st.button("Save Changes"):
-        st.session_state.todo = edited
-        st.success("Saved")
+        st.success("Saved (session)")
 
 with tab3:
-    st.subheader("Auto Pull from GitHub")
+    st.subheader("Auto Pull")
     if st.button("Pull Latest Opportunities"):
         try:
             r = requests.get("https://raw.githubusercontent.com/kritikl/brain/main/opportunities.json", timeout=10)
@@ -69,10 +64,11 @@ with tab3:
                         'Task Description': opp.get('title', 'New Opportunity'),
                         'Notes': opp.get('match', 'New')
                     }])
-                    st.session_state.todo = pd.concat([st.session_state.todo, new_row], ignore_index=True)
-                st.success("New entries added!")
+                    todo = pd.concat([todo, new_row], ignore_index=True)
+                    st.session_state.todo = todo
+                st.success("Added!")
             else:
-                st.error(f"Failed. Status: {r.status_code}. Make sure repo is public and opportunities.json exists.")
+                st.error(f"Failed. Status: {r.status_code}")
         except Exception as e:
             st.error(f"Could not fetch. Error: {str(e)}")
 
@@ -85,7 +81,8 @@ with tab4:
         notes = st.text_input("Notes")
         if st.form_submit_button("Add"):
             new_row = pd.DataFrame([{'Status': 'To Do', 'Deadline': str(deadline), 'Category': category, 'Task Description': task, 'Notes': notes}])
-            st.session_state.todo = pd.concat([st.session_state.todo, new_row], ignore_index=True)
+            todo = pd.concat([todo, new_row], ignore_index=True)
+            st.session_state.todo = todo
             st.success("Added!")
 
-st.caption("v1.6 Stable - Fixed")
+st.caption("v1.7 Stable Minimal")

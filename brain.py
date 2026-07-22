@@ -6,7 +6,6 @@ from datetime import datetime
 st.set_page_config(page_title="AI Hardware Second Brain", layout="wide")
 st.title("AI Hardware Career Second Brain")
 
-# Full data
 data = {
     'Status': ['To Do'] * 20,
     'Deadline': ['2026-10-31','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','2026-11-15','2026-12-01',
@@ -63,26 +62,55 @@ with tab2:
 
 with tab3:
     st.subheader("Auto Scan")
+
     if st.button("Pull Latest Opportunities from GitHub"):
+        url = "https://raw.githubusercontent.com/kritikl/brain/main/opportunities.json"
+
+        st.write(f"Fetching: {url}")
+
         try:
-            r = requests.get("https://raw.githubusercontent.com/kritikl/brain/main/opportunities.json", timeout=10)
+            r = requests.get(url, timeout=10)
+
+            st.write(f"HTTP Status: {r.status_code}")
+            st.write("Response Preview:")
+            st.code(r.text[:500], language="text")
+
             if r.status_code == 200:
                 new_opps = r.json()
-                st.success(f"Found {len(new_opps)} new opportunities!")
+
+                st.success(f"Found {len(new_opps)} opportunities.")
+
+                added = 0
+
                 for opp in new_opps:
-                    new_row = pd.DataFrame([{
-                        'Status': 'To Do',
-                        'Deadline': opp.get('deadline', 'Ongoing'),
-                        'Category': 'Application',
-                        'Task Description': opp.get('title', 'New Opportunity'),
-                        'Notes': opp.get('match', 'New')
-                    }])
-                    st.session_state.todo = pd.concat([st.session_state.todo, new_row], ignore_index=True)
-                st.success("New entries added to list!")
+                    title = opp.get("title", "New Opportunity")
+
+                    if title not in st.session_state.todo["Task Description"].values:
+                        new_row = pd.DataFrame([{
+                            "Status": "To Do",
+                            "Deadline": opp.get("deadline", "Ongoing"),
+                            "Category": "Application",
+                            "Task Description": title,
+                            "Notes": opp.get("match", "New")
+                        }])
+
+                        st.session_state.todo = pd.concat(
+                            [st.session_state.todo, new_row],
+                            ignore_index=True
+                        )
+
+                        added += 1
+
+                st.success(f"Added {added} new opportunities.")
+
             else:
-                st.error(f"Failed to fetch (Status {r.status_code}). Ensure repo is public and opportunities.json exists.")
+                st.error(f"GitHub returned HTTP {r.status_code}")
+
+        except requests.exceptions.RequestException as e:
+            st.exception(e)
+
         except Exception as e:
-            st.error(f"Could not fetch. Error: {str(e)}")
+            st.exception(e)
 
 with tab4:
     st.subheader("Manual Add")
@@ -96,4 +124,4 @@ with tab4:
             st.session_state.todo = pd.concat([st.session_state.todo, new_row], ignore_index=True)
             st.success("Added!")
 
-st.caption("v1.7 - Scanning Integrated")
+st.caption("v1.7 - With your Auto Scan tab")

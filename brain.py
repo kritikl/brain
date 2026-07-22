@@ -6,68 +6,33 @@ from datetime import datetime
 st.set_page_config(page_title="AI Hardware Second Brain", layout="wide")
 st.title("AI Hardware Career Second Brain")
 
-@st.cache_data
-def load_full_todo():
-    data = {
-        'Status': ['To Do'] * 40,
-        'Deadline': ['2026-10-31','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','2026-11-15','2026-12-01',
-                     '2026-12-01','2026-12-01','2026-12-15','Self-Paced','2027-01-15','2027-03-31','Ongoing','Ongoing','Ongoing','Ongoing',
-                     '2026-12-15','2026-12-15','2026-12-15','Self-Paced','2027-01-15','Ongoing','Ongoing','Ongoing','2027-04-10','Ongoing',
-                     'Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing'],
-        'Category': ['Application','Networking','Networking','Networking','Networking','Networking','Networking','Networking','Application','Internship',
-                     'Internship','Internship','Application','Preparation','Application','Application','Networking','Networking','Networking','Networking',
-                     'Application','Application','Application','Preparation','Application','Networking','Networking','Networking','Application','Preparation',
-                     'Preparation','Preparation','Preparation','Preparation','Preparation','Preparation','Preparation','Preparation','Preparation','Preparation'],
-        'Task Description': [
-            'Apply to University of Tokyo IME Graduate Program',
-            'Contact Masato Motomura - AI hardware accelerators',
-            'Contact Tetsuya Asai - Neuromorphic',
-            'Contact Koji Inoue - Computer architecture',
-            'Contact Hidehiro Fujiwara - VLSI',
-            'Contact Luca Benini - Energy-efficient computing',
-            'Contact Giacomo Indiveri - Neuromorphic',
-            'Contact Said Hamdioui - In-memory computing',
-            'Apply to Institute of Science Tokyo IGP(A)',
-            'Apply to RIKEN AIP Winter Internship',
-            'Apply to AIST Internship',
-            'Apply to IMEC Student Internship',
-            'Apply to ETH Zurich',
-            'Review Eyeriss paper series',
-            'Apply to NUS PhD',
-            'Apply to OIST PhD',
-            'Contact Marian Verhelst (KU Leuven)',
-            'Contact David Atienza (EPFL)',
-            'Contact Ken Takeuchi (Tokyo)',
-            'Contact Takahiro Hanyu (Tohoku)',
-            'Apply to Stanford EE/CS PhD',
-            'Apply to UC Berkeley EECS PhD',
-            'Apply to MIT EECS PhD',
-            'Review Loihi Neuromorphic paper',
-            'Apply to KAIST EE PhD',
-            'Contact Rapidus lab',
-            'Contact Sony Semiconductor',
-            'Contact Renesas Electronics',
-            'Apply to Waseda IPS',
-            'Prepare MEXT Scholarship Application',
-            'Update CV with hardware projects',
-            'Prepare research proposal on efficient inference',
-            'Review ISSCC 2027 call',
-            'Track application status weekly',
-            'Schedule professor follow-ups',
-            'Contact University of Tsukuba faculty',
-            'Monitor MEXT 2027 updates',
-            'Review new papers on quantized networks',
-            'Prepare for USA applications',
-            'Weekly progress review'
-        ],
-        'Notes': ['Tier 1 Core','High priority','High priority','High priority','High priority','High priority','High priority','High priority','Tier 1 Core','High priority',
-                  'High priority','High priority','Tier 1 Core','Core reading','Backup','Core','High priority','High priority','High priority','High priority',
-                  'Reach','Reach','Reach','Core','Backup','High priority','High priority','High priority','Tier 1 Core','High','High','High','Important','High','High','High','High','High','High','High']
-    }
-    return pd.DataFrame(data)
+# Minimal stable data
+data = {
+    'Status': ['To Do'] * 15,
+    'Deadline': ['2026-10-31','Ongoing','Ongoing','Ongoing','2026-11-15','2026-12-01','2026-12-15','Self-Paced','2027-01-15','2027-03-31','Ongoing','Ongoing','Ongoing','Ongoing','Ongoing'],
+    'Category': ['Application','Networking','Networking','Networking','Application','Internship','Application','Preparation','Application','Application','Networking','Networking','Networking','Application','Preparation'],
+    'Task Description': [
+        'Apply to University of Tokyo IME Graduate Program',
+        'Contact Masato Motomura - AI hardware accelerators',
+        'Contact Tetsuya Asai - Neuromorphic',
+        'Contact Koji Inoue - Computer architecture',
+        'Apply to Institute of Science Tokyo IGP(A)',
+        'Apply to RIKEN AIP Winter Internship',
+        'Apply to ETH Zurich',
+        'Review Eyeriss paper series',
+        'Apply to NUS PhD',
+        'Apply to OIST PhD',
+        'Contact Marian Verhelst (KU Leuven)',
+        'Contact David Atienza (EPFL)',
+        'Contact Ken Takeuchi (Tokyo)',
+        'Apply to Stanford EE/CS PhD',
+        'Prepare MEXT Scholarship Application'
+    ],
+    'Notes': ['Tier 1 Core','High priority','High priority','High priority','Tier 1 Core','High priority','Tier 1 Core','Core reading','Backup','Core','High priority','High priority','High priority','Reach','High']
+}
 
 if 'todo' not in st.session_state:
-    st.session_state.todo = load_full_todo()
+    st.session_state.todo = pd.DataFrame(data)
 
 todo = st.session_state.todo
 
@@ -107,7 +72,7 @@ with tab3:
                     st.session_state.todo = pd.concat([st.session_state.todo, new_row], ignore_index=True)
                 st.success("New entries added!")
             else:
-                st.error(f"Failed. Status: {r.status_code}. Make sure repo is public and file exists.")
+                st.error(f"Failed. Status: {r.status_code}. Make sure repo is public and opportunities.json exists.")
         except Exception as e:
             st.error(f"Could not fetch. Error: {str(e)}")
 
@@ -123,4 +88,4 @@ with tab4:
             st.session_state.todo = pd.concat([st.session_state.todo, new_row], ignore_index=True)
             st.success("Added!")
 
-st.caption("v1.6 - Fixed")
+st.caption("v1.6 Stable - Fixed")

@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "date": "2026-07-23",
+    "title": "Detected opportunity at www.titech.ac.jp",
+    "deadline": "Check site for exact date",
+    "match": "Medium"
+  },
+  {
+    "date": "2026-07-23",
+    "title": "MEXT 2027 Embassy Track",
+    "deadline": "2026-05-01 (estimated)",
+    "match": "High"
+  }
+]
